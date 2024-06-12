@@ -1,0 +1,24 @@
+{
+  "name": "@codex-extensions/resource-manager-types",
+  "version": "1.0.1",
+  "description": "Types for codex-resource-manager vscode extension to allow easy dev usage while extending the resources.",
+  "main": "dist/types.js",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sevenxhq/codex-resources-manager.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sevenxhq/codex-resources-manager/issues"
+  },
+  "homepage": "https://github.com/sevenxhq/codex-resources-manager#readme",
+  "dependencies": {
+    "typescript": "^5.4.5"
+  }
+}
