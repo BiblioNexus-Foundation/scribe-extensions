@@ -1,0 +1,21 @@
+# Ignore everything
+*
+*/**
+
+# Allowlist what we need
+!out/**
+!dist/**
+!assets/**
+!servers/**
+
+!ui/build/**
+
+!src/assets/reset.css
+!src/assets/vscode.css
+!**/*.svg
+!node_modules/@vscode/codicons/dist/**
+
+!CHANGELOG.md
+!LICENSE
+!package*.json
+!README.md
