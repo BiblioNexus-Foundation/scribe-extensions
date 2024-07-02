@@ -28,7 +28,7 @@
         {
           "id": "codex-resource-explorer",
           "title": "Codex Resource Explorer",
-          "icon": "$(open-editors-view-icon)"
+          "icon": "$(cloud-download)",
         }
       ]
     },
@@ -46,7 +46,7 @@
           "name": "All Resources",
           "type": "webview",
           "contextualTitle": "Scribe Resources",
-          "visibility": "collapsed"
+          "visibility": "visible"
         }
       ]
     }
