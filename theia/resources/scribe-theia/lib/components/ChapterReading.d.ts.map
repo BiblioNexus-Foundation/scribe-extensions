@@ -1,0 +1,1 @@
+{"version":3,"file":"ChapterReading.d.ts","sourceRoot":"","sources":["../../src/components/ChapterReading.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,0BAA0B,CAAC;AAKlD,MAAM,CAAC,OAAO,UAAU,cAAc,CAAC,EACrC,OAAO,EACP,WAAW,EACX,KAAK,EACL,SAAS,GACV,EAAE;IACD,OAAO,EAAE,MAAM,CAAC;IAChB,WAAW,EAAE,MAAM,CAAC;IACpB,KAAK,EAAE,MAAM,CAAC;IACd,SAAS,EAAE,MAAM,CAAC;CACnB,qBAqBA"}

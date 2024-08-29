@@ -1,0 +1,17 @@
+{
+  "keytar": {
+    "originalLocation": "/Users/brianineza/Documents/Projects/sevenx/scribe/scribe-theia/node_modules/keytar"
+  },
+  "native-keymap": {
+    "originalLocation": "/Users/brianineza/Documents/Projects/sevenx/scribe/scribe-theia/node_modules/native-keymap"
+  },
+  "drivelist": {
+    "originalLocation": "/Users/brianineza/Documents/Projects/sevenx/scribe/scribe-theia/node_modules/drivelist"
+  },
+  "node-pty": {
+    "originalLocation": "/Users/brianineza/Documents/Projects/sevenx/scribe/scribe-theia/node_modules/node-pty"
+  },
+  "nsfw": {
+    "originalLocation": "/Users/brianineza/Documents/Projects/sevenx/scribe/scribe-theia/node_modules/nsfw"
+  }
+}

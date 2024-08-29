@@ -1,0 +1,1 @@
+cmd_Release/keymapping.node := c++ -bundle -undefined dynamic_lookup -Wl,-search_paths_first -mmacosx-version-min=10.15 -arch arm64 -L./Release -stdlib=libc++  -o Release/keymapping.node Release/obj.target/keymapping/src/string_conversion.o Release/obj.target/keymapping/src/keymapping.o Release/obj.target/keymapping/src/keyboard_mac.o -framework Cocoa
