@@ -12,8 +12,17 @@ import { ToolbarDefaultsOverride } from "./toolbar-defaults-override";
 import { bindAllToolbarContributions } from "./toolbar-contributions";
 import { bindAllWidgetsContributions } from "./widgets";
 import { ResourceManagerFactory } from "./resource-manager/resources-manager-factory";
-import { WidgetFactory } from "@theia/core/lib/browser";
+import {
+  RemoteConnectionProvider,
+  WidgetFactory,
+  type ServiceConnectionProvider,
+} from "@theia/core/lib/browser";
 import { bindAllResourceManagerContributions } from "./resource-manager/bind";
+import { HelloService } from "./hello-task-contribution";
+import {
+  HelloTaskService,
+  type IHelloTaskService,
+} from "../common/hello-task-protocol";
 
 export default new ContainerModule(
   (
@@ -31,5 +40,17 @@ export default new ContainerModule(
     bindAllToolbarContributions(bind);
     bindAllWidgetsContributions(bind);
     bindAllResourceManagerContributions(bind);
+
+    bind(HelloService).toSelf().inSingletonScope();
+    bind(HelloTaskService)
+      .toDynamicValue((ctx) => {
+        const connection = ctx.container.get<ServiceConnectionProvider>(
+          RemoteConnectionProvider
+        );
+        return connection.createProxy<IHelloTaskService>(
+          "/services/hello-task-service"
+        );
+      })
+      .inSingletonScope();
   }
 );
