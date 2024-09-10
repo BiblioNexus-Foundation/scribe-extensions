@@ -1,0 +1,1 @@
+{"version":3,"file":"QuestionCard.d.ts","sourceRoot":"","sources":["../../src/components/QuestionCard.tsx"],"names":[],"mappings":"AACA,OAAO,KAAK,KAAK,MAAM,0BAA0B,CAAC;AAKlD,MAAM,CAAC,OAAO,UAAU,YAAY,CAAC,EACnC,OAAO,EACP,OAAO,GACR,EAAE;IACD,OAAO,CAAC,EAAE,OAAO,CAAC;IAClB,OAAO,CAAC,EAAE,OAAO,CAAC;CACnB,qBAqFA"}

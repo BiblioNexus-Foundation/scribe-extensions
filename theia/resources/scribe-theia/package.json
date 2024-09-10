@@ -1,0 +1,67 @@
+{
+  "name": "scribe-theia",
+  "keywords": [
+    "theia-extension"
+  ],
+  "version": "0.0.0",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "dependencies": {
+    "@radix-ui/react-popover": "^1.1.1",
+    "@radix-ui/react-scroll-area": "^1.0.5",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@svgr/webpack": "^8.1.0",
+    "@tabler/icons-react": "^3.3.0",
+    "@tailwindcss/typography": "^0.5.14",
+    "@tanstack/react-query": "^5.52.2",
+    "@theia/core": "latest",
+    "@theia/filesystem": "^1.51.0",
+    "@theia/plugin-ext-vscode": "^1.51.0",
+    "@theia/toolbar": "latest",
+    "@types/marked": "^6.0.0",
+    "@types/react-virtualized": "^9.21.30",
+    "@vscode/webview-ui-toolkit": "^1.4.0",
+    "bible-reference-range": "^1.1.1",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.378.0",
+    "marked": "^14.0.0",
+    "moment": "^2.30.1",
+    "npm-watch": "^0.13.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-resizable-panels": "^2.0.19",
+    "react-virtualized": "^9.22.5",
+    "tailwind-merge": "^2.3.0",
+    "unzipit": "^1.4.3",
+    "use-deep-compare": "^1.3.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "rimraf": "latest",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.5.3"
+  },
+  "scripts": {
+    "clean": "rimraf lib",
+    "build": "tsc && npx tailwindcss -i ./src/browser/styles/globals.css -o ./lib/browser/output-tailwind.css -c ./tailwind.config.js",
+    "watch": "npm-watch build"
+  },
+  "theiaExtensions": [
+    {
+      "frontend": "lib/browser/scribe-theia-frontend-module"
+    }
+  ],
+  "watch": {
+    "build": {
+      "patterns": [
+        "src/**/*"
+      ],
+      "extensions": "ts,html,scss,css,tsx,json",
+      "quiet": false
+    }
+  }
+}

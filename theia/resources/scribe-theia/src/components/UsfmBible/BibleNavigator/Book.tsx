@@ -1,0 +1,79 @@
+import { useContext, useEffect } from "react";
+import { ChapterExplorer } from "./Chapter";
+import React from "@theia/core/shared/react";
+import { ReferenceContext } from "../ReferenceContext";
+import { BookPayload } from "../types/types";
+import { getChapters } from "../utilities/BooksInBible";
+
+export const BookView = ({
+  onBookClick,
+  bookList,
+}: {
+  onBookClick: (book: BookPayload) => void;
+  bookList: BookPayload[] | undefined;
+}) => {
+  const {
+    state: { selectedBook, showChapterList },
+    actions,
+  } = useContext(ReferenceContext);
+  const {
+    setSelectedBook,
+    setBookChapters,
+    setSelectedChapter,
+    setShowChapterList,
+  } = actions;
+
+  const handleSelectChapter = (chapter: string) => {
+    setSelectedChapter(parseInt(chapter));
+    // vscode.postMessage({
+    //   type: MessageType.UPDATE_CHAPTER,
+    //   payload: { chapter },
+    // });
+    // const editor = document.getElementById("bibleRefEditor");
+    // if (editor) {
+    //   const element = editor.querySelector(`[data-chapter="${chapter}"]`);
+    //   if (element) {
+    //     element.scrollIntoView({
+    //       behavior: "smooth",
+    //       block: "start",
+    //       inline: "nearest",
+    //     });
+    //   }
+    // }
+  };
+
+  const handleSelectBook = (book: BookPayload) => {
+    onBookClick(book);
+    setSelectedBook(book.fileName);
+    const { chapters } = getChapters(book.book);
+    setBookChapters(chapters);
+    setShowChapterList((prev) => !prev);
+  };
+
+  useEffect(() => {
+    setShowChapterList(true);
+  }, [selectedBook]);
+  return (
+    <div className="space-y-2">
+      <div className="space-y-2 ">
+        {bookList &&
+          bookList.length > 0 &&
+          bookList.map((book, index) => (
+            <div key={index}>
+              <div
+                className="cursor-pointer text-left hover:text-blue-500 rounded border border-gray-300 p-2"
+                onClick={() => handleSelectBook(book)}
+              >
+                {book.book}
+              </div>
+              {selectedBook &&
+                selectedBook === book.fileName &&
+                showChapterList && (
+                  <ChapterExplorer onSelectChapter={handleSelectChapter} />
+                )}
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+};

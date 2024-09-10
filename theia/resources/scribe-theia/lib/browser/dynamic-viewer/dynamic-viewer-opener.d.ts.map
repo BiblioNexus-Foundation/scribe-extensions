@@ -1,0 +1,1 @@
+{"version":3,"file":"dynamic-viewer-opener.d.ts","sourceRoot":"","sources":["../../../src/browser/dynamic-viewer/dynamic-viewer-opener.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,aAAa,EAAE,MAAM,yBAAyB,CAAC;AAK1E,qBACa,mBAAmB;IAE9B,KAAK,EAAE,gBAAgB,CAAC;IAGxB,aAAa,EAAE,aAAa,CAAC;IAEvB,IAAI,CAAC,UAAU,EAAE,MAAM,GAAG,OAAO,CAAC,IAAI,CAAC;CAkB9C"}
