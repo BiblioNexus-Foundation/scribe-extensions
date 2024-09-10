@@ -52,7 +52,8 @@
   },
   "theiaExtensions": [
     {
-      "frontend": "lib/browser/scribe-theia-frontend-module"
+      "frontend": "lib/browser/scribe-theia-frontend-module",
+      "backend": "lib/node/scribe-theia-backend-module"
     }
   ],
   "watch": {
