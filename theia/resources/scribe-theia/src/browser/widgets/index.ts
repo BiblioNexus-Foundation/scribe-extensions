@@ -21,6 +21,10 @@ import {
   BottomEditorRightContribution,
   BottomEditorRightWidget,
 } from "./BottomEditorRight";
+import {
+  ResourcePickerDialogProps,
+  ResourcesPickerWidget,
+} from "./ResourcePickerWidget";
 
 export const bindAllWidgetsContributions = (bind: interfaces.Bind) => {
   // sidebar widget binds
@@ -82,4 +86,9 @@ export const bindAllWidgetsContributions = (bind: interfaces.Bind) => {
         context.container.get<BottomEditorRightWidget>(BottomEditorRightWidget),
     }))
     .inSingletonScope();
+  bind(ResourcePickerDialogProps).toConstantValue({
+    title: "Resources Picker",
+  });
+
+  bind(ResourcesPickerWidget).toSelf().inSingletonScope();
 };

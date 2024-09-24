@@ -34,7 +34,7 @@ export class BottomEditorLeft extends ReactWidget {
     this.id = BottomEditorLeft.ID;
     this.title.label = BottomEditorLeft.LABEL;
     this.title.caption = BottomEditorLeft.LABEL;
-    this.title.closable = false;
+    this.title.closable = true;
 
     this.update();
   }
@@ -107,6 +107,6 @@ export class BottomEditorLeftContribution
   async onStart(app: FrontendApplication): Promise<void> {
     this.stateService
       .reachedState("ready")
-      .then(() => this.openView({ reveal: true, area: "bottom" }));
+      .then(() => this.openView({ reveal: false, area: "bottom" }));
   }
 }

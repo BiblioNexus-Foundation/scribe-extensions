@@ -8,6 +8,9 @@ import {
 import React from "@theia/core/shared/react";
 
 import TranslationNoteScroller from "./TranslationNoteScroller";
+import { Badge } from "../ui/Badge";
+import Button from "../Button";
+import TranslationNote from "./TranslationNote";
 
 type CommandToFunctionMap = Record<string, (data: any) => void>;
 
@@ -76,23 +79,38 @@ function TranslationNotesView({
   const decrementNoteIndex = () =>
     setNoteIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
 
-  const content = translationNotesObj?.[chapter]?.[verse] ? (
-    <TranslationNoteScroller
-      notes={translationNotesObj[chapter][verse] || {}}
-      currentIndex={noteIndex}
-      incrementIndex={incrementNoteIndex}
-      decrementIndex={decrementNoteIndex}
-    />
-  ) : (
-    "No translation notes available for this verse."
-  );
+  const notes = translationNotesObj?.[chapter]?.[verse] || [];
 
   return (
     <main>
       <section className="translation-note-view">
+        <div className="flex items-center border-b py-2.5 px-2 dark:border-zinc-900 border-zinc-200 justify-between">
+          <Badge variant="destructive">
+            {noteIndex + 1} of {notes.length}
+          </Badge>
+          <div className="flex items-center gap-[5px]">
+            <Button
+              icon={
+                <span className="arrow-button codicon codicon-chevron-left"></span>
+              }
+              onClick={decrementNoteIndex}
+            />
+            <Button
+              icon={
+                <span className="arrow-button codicon codicon-chevron-right"></span>
+              }
+              onClick={incrementNoteIndex}
+            />
+          </div>
+        </div>
         <VSCodePanels activeid="tab-verse" aria-label="note-type-tab">
-          <VSCodePanelTab id="tab-verse">VERSE NOTES</VSCodePanelTab>
-          <VSCodePanelView id="view-verse">{content}</VSCodePanelView>
+          <VSCodePanelView id="view-verse">
+            <div className="mt-2.5 font-normal space-y-2 mx-auto max-w-md">
+              <article className="dark:text-zinc-50 text-zinc-700 leading-5   text-xs tracking-wide text-center whitespace-pre-line">
+                {<TranslationNote note={notes[noteIndex]} />}
+              </article>
+            </div>
+          </VSCodePanelView>
         </VSCodePanels>
       </section>
     </main>

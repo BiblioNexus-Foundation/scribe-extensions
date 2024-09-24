@@ -53,7 +53,7 @@ export type ScribeResource<
 
   getTableDisplayData: () => Promise<ResourceDisplay<FullResource>[]>;
 
-  openHandlers: ResourceViewerWidgetHandlers<TData>;
+  openHandlers: Omit<ResourceViewerWidgetHandlers<TData>, "id">;
 
   //   openResource: (
   //     resource: ConfigResourceValues,
@@ -528,6 +528,10 @@ export interface Ingredient {
   title: string;
   versification: string;
 }
+
+export type TsvRow = {
+  [key: string]: string;
+};
 
 export type TwlTsvRow = {
   Reference: string;

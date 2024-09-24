@@ -2,21 +2,19 @@ import * as React from "@theia/core/shared/react";
 import { markdownToHTML } from "../../utils/tsv";
 
 const TranslationWordRenderer = ({ content }: { content: string | null }) => {
-  if (content === null) {
-    return (
-      <div className="prose-base">
-        <i>
-          <h2>Select a translation word to view its content.</h2>
-        </i>
-      </div>
-    );
-  }
-
   return (
-    <div
-      dangerouslySetInnerHTML={{ __html: markdownToHTML(content) ?? "" }}
-      className="prose prose-sm"
-    />
+    <div className="mt-2.5 font-normal space-y-2 mx-auto max-w-md">
+      <article className="dark:text-zinc-50 text-zinc-700 leading-5 text-xs tracking-wide text-center whitespace-pre-line">
+        {content ? (
+          <div
+            dangerouslySetInnerHTML={{ __html: markdownToHTML(content) ?? "" }}
+            className="prose prose-sm"
+          />
+        ) : (
+          "Select a translation word to view its content."
+        )}
+      </article>
+    </div>
   );
 };
 

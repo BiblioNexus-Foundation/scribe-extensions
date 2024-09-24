@@ -4,7 +4,7 @@ import {
   downloadDoor43Resource,
   fetchDoor43ResourceDisplayData,
 } from "./utils";
-import TranslationWords from "../../../components/TranslationWords";
+import TranslationWords from "@/components/TranslationWords";
 
 export const twResource: ScribeResource<Door43RepoResponse, TranslationWord[]> =
   {
@@ -87,10 +87,7 @@ export const twResource: ScribeResource<Door43RepoResponse, TranslationWord[]> =
           return "Err: Context is required to render Translation Academy";
         }
 
-        const searchTranslationWord = async (
-          category?: string,
-          query?: string
-        ) => {
+        const searchTranslationWord = (category?: string, query?: string) => {
           if (!query || query.length === 0) {
             return data.filter(
               (word) => category === "all" || word.ref === category
@@ -107,6 +104,10 @@ export const twResource: ScribeResource<Door43RepoResponse, TranslationWord[]> =
         };
 
         const getTwContent = async (word: TranslationWord) => {
+          if (!word) {
+            return null;
+          }
+
           const fileUri = ctx.resourceUri.withPath(word.path);
 
           const fileContents = await ctx.fs.readFile(fileUri);
@@ -120,7 +121,9 @@ export const twResource: ScribeResource<Door43RepoResponse, TranslationWord[]> =
           <TranslationWords
             getTwContent={getTwContent}
             initialTranslationWords={data}
-            searchTranslationWords={searchTranslationWord}
+            searchTranslationWords={async (category?: string, query?: string) =>
+              await Promise.resolve(searchTranslationWord(category, query))
+            }
           />
         );
       },

@@ -29,7 +29,7 @@ export class BottomEditorRightWidget extends ReactWidget {
     this.id = BottomEditorRightWidget.ID;
     this.title.label = BottomEditorRightWidget.LABEL;
     this.title.caption = BottomEditorRightWidget.LABEL;
-    this.title.closable = false;
+    this.title.closable = true;
 
     this.update();
   }
@@ -98,7 +98,7 @@ export class BottomEditorRightContribution
     this.stateService
       .reachedState("ready")
       .then(() =>
-        this.openView({ reveal: true, area: "bottom", mode: "split-right" })
+        this.openView({ reveal: false, area: "bottom", mode: "split-right" })
       );
   }
 }

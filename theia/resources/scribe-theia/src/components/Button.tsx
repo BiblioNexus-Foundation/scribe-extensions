@@ -1,20 +1,20 @@
 import * as React from "@theia/core/shared/react";
-import { Buttons } from "./ui/Button";
+import { Buttons, type ButtonProps } from "./ui/Button";
 export default function Button({
   label,
   icon,
   size,
   className,
   onClick,
+  ...rest
 }: {
   label?: string;
   icon?: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
   size?: "default" | "sm" | "lg" | "icon";
-}) {
+} & ButtonProps) {
   return (
     <Buttons
+      {...rest}
       onClick={onClick}
       size={size}
       className={className}

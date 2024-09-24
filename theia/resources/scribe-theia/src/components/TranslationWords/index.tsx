@@ -1,10 +1,8 @@
 import * as React from "@theia/core/shared/react";
 
-import TranslationWordsDropdown from "./TranslationWordsDropdown";
 import TranslationWordRenderer from "./TranslationWordRenderer";
 import { TranslationWord } from "../../browser/resource-manager/resources/types";
-
-const { useState } = React;
+import TranslationWordsHeader from "./TranslationWordsHeader";
 
 const TranslationWords = ({
   getTwContent,
@@ -18,26 +16,27 @@ const TranslationWords = ({
     query: string
   ) => Promise<TranslationWord[]>;
 }) => {
-  const [translationWord, setTranslationWord] =
-    useState<TranslationWord | null>(null);
-
-  const [twContent, setTwContent] = useState<string | null>(null);
-
-  React.useEffect(() => {
-    if (translationWord) {
-      getTwContent(translationWord).then((content) => {
-        setTwContent(content);
-      });
-    }
-  }, [translationWord]);
+  const {
+    setTranslationWord,
+    category,
+    setCategory,
+    twContent,
+    translationWord,
+    translationWords,
+  } = useTranslationWords({
+    getTwContent,
+    initialTranslationWords,
+    searchTranslationWords,
+  });
 
   return (
     <div className="flex flex-col">
-      <TranslationWordsDropdown
+      <TranslationWordsHeader
+        words={translationWords}
         setTranslationWord={setTranslationWord}
-        selectedTranslationWord={translationWord}
-        initialTranslationWords={initialTranslationWords}
-        searchTranslationWords={searchTranslationWords}
+        category={category}
+        setCategory={setCategory}
+        selectedWord={translationWord}
       />
       <TranslationWordRenderer content={twContent} />
     </div>
@@ -45,3 +44,51 @@ const TranslationWords = ({
 };
 
 export default TranslationWords;
+
+const useTranslationWords = ({
+  getTwContent,
+  searchTranslationWords,
+  initialTranslationWords,
+}: {
+  getTwContent: (tw: TranslationWord) => Promise<string | null>;
+  initialTranslationWords: TranslationWord[];
+  searchTranslationWords: (
+    category: "all" | "kt" | "names" | "other",
+    query: string
+  ) => Promise<TranslationWord[]>;
+}) => {
+  const [translationWords, setTranslationWords] = React.useState<
+    TranslationWord[]
+  >(initialTranslationWords);
+  const [translationWord, setTranslationWord] =
+    React.useState<TranslationWord | null>(null);
+  const [category, setCategory] = React.useState<
+    "all" | "kt" | "names" | "other"
+  >("all");
+  const [twContent, setTwContent] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    console.log("GETTING TW CONTENT");
+    if (translationWord) {
+      getTwContent(translationWord).then((content) => {
+        setTwContent(content);
+      });
+    }
+  }, [translationWord]);
+
+  React.useEffect(() => {
+    console.log("SEARCHING TW WORDS: & RETURING WORDS");
+    searchTranslationWords(category, "").then((words) => {
+      setTranslationWords(words);
+    });
+  }, [category]);
+
+  return {
+    setTranslationWord,
+    category,
+    setCategory,
+    twContent,
+    translationWord,
+    translationWords,
+  };
+};

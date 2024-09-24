@@ -9,7 +9,7 @@ import {
 import { ResourcesViewerWidget } from "./resources-viewer-widget";
 import { RESOURCE_MANAGER_ID } from "./resources-manager-factory";
 import { injectable, postConstruct } from "@theia/core/shared/inversify";
-import { CommandRegistry, MaybePromise } from "@theia/core";
+import { CommandRegistry } from "@theia/core";
 import { isHighContrast } from "@theia/core/lib/common/theme";
 
 export const TOGGLE_RESOURCE_MANAGER = {

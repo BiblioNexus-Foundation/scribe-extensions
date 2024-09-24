@@ -18,7 +18,7 @@ import {
   DownloadResourceUtils,
   ScribeResource,
 } from "./resources/types";
-import { tnResource, twlResource } from "./resources";
+import { registeredResources, tnResource, twlResource } from "./resources";
 import { WorkspaceService } from "@theia/workspace/lib/browser/workspace-service";
 import { FileService } from "@theia/filesystem/lib/browser/file-service";
 
@@ -28,6 +28,8 @@ import { BottomEditorLeftContribution } from "../widgets/BottomEditorLeft";
 import { ResourceViewerOpener } from "./resource-viewer/resource-viewer-opener";
 import { taResource } from "./resources/ta";
 import { twResource } from "./resources/tw";
+import { ResourcesPickerWidget } from "../widgets/ResourcePickerWidget";
+import { tqResource } from "./resources/tq";
 
 @injectable()
 export class ResourcesViewerWidget extends ReactWidget {
@@ -63,12 +65,15 @@ export class ResourcesViewerWidget extends ReactWidget {
 
   private downloadedResources: ConfigResourceValues[] = [];
 
+  @inject(ResourcesPickerWidget)
+  protected readonly resourcesPickerWidget: ResourcesPickerWidget;
+
   @postConstruct()
   protected init() {
     this.id = ResourcesViewerWidget.ID;
     this.title.label = ResourcesViewerWidget.LABEL;
     this.title.caption = ResourcesViewerWidget.LABEL;
-    this.title.closable = false;
+    this.title.closable = true;
     this.title.iconClass = codicon("flame");
     this.node.tabIndex = 0;
   }
@@ -92,12 +97,11 @@ export class ResourcesViewerWidget extends ReactWidget {
       });
   }
 
-  protected registeredResources: ScribeResource[] = [
-    tnResource,
-    twlResource,
-    taResource,
-    twResource,
-  ];
+  protected registeredResources = registeredResources;
+
+  openDialog = () => {
+    this.resourcesPickerWidget.open();
+  };
 
   render() {
     const resourcesTypes = this.registeredResources.map((resource) => ({
@@ -118,14 +122,16 @@ export class ResourcesViewerWidget extends ReactWidget {
         return;
       }
 
-      await this.resourceViewerOpener.open(
-        resourceInfo,
-        resourceType.openHandlers
-      );
+      await this.resourceViewerOpener.open(resourceInfo, {
+        ...resourceType.openHandlers,
+        id: resourceType.id,
+      });
     };
 
     return (
       <div className="flex flex-col mx-4">
+        <button onClick={this.openDialog}>Open Dialog</button>
+
         <ResourcesTable
           resourcesTypes={resourcesTypes}
           downloadedResources={this.downloadedResources}

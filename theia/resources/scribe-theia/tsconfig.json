@@ -20,7 +20,11 @@
     "sourceMap": true,
     "rootDir": "src",
     "outDir": "lib",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": "./src/",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": ["src", "svg.d.ts"]
 }

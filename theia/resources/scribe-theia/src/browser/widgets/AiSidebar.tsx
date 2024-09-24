@@ -35,7 +35,7 @@ export class AiSidebar extends ReactWidget {
     this.id = AiSidebar.ID;
     this.title.label = AiSidebar.LABEL;
     this.title.caption = AiSidebar.LABEL;
-    this.title.closable = false;
+    this.title.closable = true;
 
     this.update();
   }
@@ -141,12 +141,12 @@ export class AiSidebarContribution
   async onStart(app: FrontendApplication): Promise<void> {
     this.stateService
       .reachedState("ready")
-      .then(() => this.openView({ reveal: true }));
+      .then(() => this.openView({ reveal: false }));
   }
 
   override registerCommands(registry: CommandRegistry): void {
     registry.registerCommand(AiSidebarCommand, {
-      execute: () => this.openView({ reveal: true }),
+      execute: () => this.openView({ reveal: false }),
     });
   }
 

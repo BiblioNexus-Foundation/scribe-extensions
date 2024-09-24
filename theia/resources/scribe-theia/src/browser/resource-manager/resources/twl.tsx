@@ -10,6 +10,10 @@ import moment from "moment";
 import { unzip } from "unzipit";
 
 import * as React from "@theia/core/shared/react";
+import { twResource } from "./tw";
+import { parseTwlTsv, tsvToChapterVerseRef } from "./utils";
+import type { FileService } from "@theia/filesystem/lib/browser/file-service";
+import TranslationWordsList from "../../../components/TranslationWordsList";
 
 export const twlResource: ScribeResource<Door43RepoResponse> = {
   id: "codex.twl",
@@ -86,31 +90,36 @@ export const twlResource: ScribeResource<Door43RepoResponse> = {
     //   "Downloading linked resource for Translation Words List"
     // );
 
-    // const linkedResource = await getLinkedTwResource(fullResource);
+    console.log("Downloading linked resource for Translation Words List");
 
-    // let linkedDownloadResponse = null;
+    const linkedResource = await getLinkedTwResource(fullResource);
 
-    // if (linkedResource) {
-    //   linkedDownloadResponse = await twHandler.downloadResource(
-    //     linkedResource.fullResource,
-    //     {
-    //       resourceFolderUri: resourceFolderUri,
-    //       fs: fs,
-    //     }
-    //   );
-    //   vscode.window.showInformationMessage(
-    //     "Linked resource for Translation Words List downloaded successfully"
-    //   );
-    // } else {
-    //   vscode.window.showErrorMessage(
-    //     "Unable to download linked resource for Translation Words List"
-    //   );
-    // }
+    let linkedDownloadResponse = null;
+
+    if (linkedResource) {
+      linkedDownloadResponse = await twResource.downloadResource(
+        linkedResource,
+        {
+          resourceFolderUri: resourceFolderUri,
+          fs: fs,
+        }
+      );
+      // vscode.window.showInformationMessage(
+      //   "Linked resource for Translation Words List downloaded successfully"
+      // );
+
+      console.log(
+        "Linked resource for Translation Words List downloaded successfully"
+      );
+    } else {
+      console.log(
+        "Unable to download linked resource for Translation Words List"
+      );
+    }
 
     const resourceReturn = {
       resource: fullResource,
       folder: downloadResourceFolder,
-      type: resourceInfo.id,
     };
 
     const localPath: string = resourceReturn?.folder.path.toString();
@@ -119,28 +128,179 @@ export const twlResource: ScribeResource<Door43RepoResponse> = {
       name: resourceReturn?.resource.name ?? "",
       id: String(resourceReturn?.resource.id) ?? "",
       localPath: localPath,
-      type: resourceReturn?.type ?? "",
+      type: twlResource.id,
       remoteUrl: resourceReturn?.resource.url ?? "",
       version: resourceReturn?.resource.release.tag_name,
-      //   linkedTw: linkedDownloadResponse && {
-      //     ...linkedDownloadResponse,
-      //     localPath: linkedDownloadResponse.localPath.includes(
-      //       currentFolderURI.path
-      //     )
-      //       ? linkedDownloadResponse.localPath.replace(currentFolderURI.path, "")
-      //       : linkedDownloadResponse.localPath,
-      //   },
+      linkedTw: linkedDownloadResponse && {
+        ...linkedDownloadResponse,
+        localPath: linkedDownloadResponse.localPath.includes(
+          resourceFolderUri.path.toString()
+        )
+          ? linkedDownloadResponse.localPath.replace(
+              resourceFolderUri.path.toString(),
+              ""
+            )
+          : linkedDownloadResponse.localPath,
+      },
     };
 
     return downloadedResource;
   },
 
   openHandlers: {
-    async readResourceData(uri, fs) {
-      return {};
+    async readResourceData(uri, fs, ctx) {
+      // const { bookID, chapter, verse } = extractBookChapterVerse(verseRef);
+
+      const bookID = "GEN";
+      const chapter = 1;
+      const verse = 1;
+
+      const bookUri = uri.withPath(uri.path.join(`twl_${bookID}.tsv`));
+      const bookContent = await fs.readFile(bookUri);
+
+      const bookContentString = bookContent.value.toString();
+
+      const tsvData = parseTwlTsv(bookContentString);
+
+      const tsvDataWithTwUriPromises = await Promise.allSettled(
+        tsvData.map(async (row) => ({
+          ...row,
+          twUriPath: (
+            await convertTwlRCUriToScribeResourceUri({
+              resource: ctx.resource,
+              path: row.TWLink,
+              resourceUri: uri,
+              fs: fs,
+              resourcesRootUri: ctx.resourcesRootUri,
+            })
+          ).path.toString(),
+        }))
+      );
+
+      const TsvDataWithTwUri = tsvDataWithTwUriPromises
+        .map((p) => (p.status === "fulfilled" ? p.value : null))
+        .filter(Boolean);
+
+      const chapterVerseRef = tsvToChapterVerseRef(
+        TsvDataWithTwUri as NonNullable<(typeof TsvDataWithTwUri)[number]>[]
+      );
+
+      // Removing the ones which don't have files on the disk
+      const wordsWithExistsOnDisk = await Promise.all(
+        chapterVerseRef?.[chapter]?.[verse]?.map(async (word) => ({
+          ...word,
+          existsOnDisk: await fs.exists(URI.fromFilePath(word.twUriPath)),
+        })) ?? []
+      );
+
+      return wordsWithExistsOnDisk ?? [];
     },
-    render(data) {
-      return <div>Translation Words List</div>;
+    render(data, ctx) {
+      console.log("data: ", data);
+
+      const getTranslationWordContent = async (path: string) => {
+        const file = await ctx?.fs.readFile(URI.fromFilePath(path));
+        return file?.value?.toString() ?? "";
+      };
+
+      return (
+        <TranslationWordsList
+          diskTwl={data}
+          translationWordsList={data}
+          getTranslationWordContent={getTranslationWordContent}
+        />
+      );
     },
   },
+};
+
+export const getLinkedTwResource = async (
+  resourceMetadata: Door43RepoResponse
+): Promise<{
+  fullResource: any;
+  resourceType: "codex.tw";
+  display: any;
+} | null> => {
+  const lang = resourceMetadata.language;
+  const owner = resourceMetadata.owner;
+
+  const baseUrl = `https://git.door43.org/api/v1/catalog/search?metadataType=rc&`;
+  const url = `${baseUrl}subject=Translation Words&lang=${lang}`;
+
+  const fetchedData = await fetch(url);
+  const fetchedJson = (await fetchedData.json()) as any;
+
+  const resources = fetchedJson.data;
+
+  if (resources.length === 0) {
+    return null;
+  }
+
+  if (resources.length === 1) {
+    return resources[0];
+  }
+
+  const linkedResource =
+    resources.find((resource: any) => resource.owner === owner) ?? resources[0];
+
+  return {
+    fullResource: linkedResource,
+    resourceType: "codex.tw",
+    display: {
+      id: linkedResource.id.toString(),
+      name: linkedResource.name,
+      owner: {
+        name: linkedResource.repo.owner.full_name,
+        url: linkedResource.repo.owner.website,
+        avatarUrl: linkedResource.repo.owner.avatar_url,
+      },
+      version: {
+        tag: linkedResource.release.tag_name,
+        releaseDate: new Date(linkedResource.released),
+      },
+      fullResource: linkedResource,
+      resourceType: "codex.tw",
+    },
+  };
+};
+
+export const convertTwlRCUriToScribeResourceUri = async ({
+  path,
+  resource,
+  resourceUri,
+  fs,
+  resourcesRootUri,
+}: {
+  resourceUri: URI;
+  resource: ConfigResourceValues;
+  path: string;
+  fs: FileService;
+  resourcesRootUri: URI;
+}): Promise<URI> => {
+  try {
+    const twlResourceMetaUri = resourceUri.withPath(
+      resourceUri.path.join("metadata.json")
+    );
+
+    const twlResourceMetaFile = await fs.readFile(twlResourceMetaUri);
+
+    const twlResourceLanguage = JSON.parse(twlResourceMetaFile.value.toString())
+      ?.meta?.language;
+
+    const twResourcesUri = URI.fromFilePath(
+      resourcesRootUri.path.toString() + resource.linkedTw.localPath
+    );
+
+    const twPath = path.replace(
+      "rc://*/tw/dict",
+      twResourcesUri.path.toString()
+    );
+
+    const uri = URI.fromFilePath(`${twPath}.md`);
+
+    return uri;
+  } catch (error) {
+    console.log("Error In convertTwlRCUriToScribeResourceUri: ", error);
+    throw error;
+  }
 };

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "../../utils/clsx";
+import { cn } from "@/utils/clsx";
 
 const buttonVariants = cva(
   "inline-flex items-center rounded-lg dark:text-zinc-50 text-zinc-700  text-xs justify-center whitespace-nowrap rounded-md font-normal transition-colors focus:outline-none gap-[5px]   disabled:pointer-events-none disabled:opacity-50",
